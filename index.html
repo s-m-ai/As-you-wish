@@ -3,12 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cursed Terminal - Universal</title>
+    <title>Cursed Terminal - Bucket Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Mitr:wght@300;500;700;900&display=swap" rel="stylesheet">
     <style>
+        /* === CSS Variables for Dynamic Theme === */
+        :root {
+            --primary: #ff0033;
+            --secondary: #800000;
+            --glow: #ff0000;
+            --shadow: #330000;
+            --glitch-1: #00ffff;
+            --glitch-2: #ff0033;
+        }
+
+        body.theme-green {
+            --primary: #00ff33;
+            --secondary: #008000;
+            --glow: #00ff00;
+            --shadow: #003300;
+            --glitch-1: #ff00ff;
+            --glitch-2: #00ff33;
+        }
+
         /* Custom Font Settings */
         .font-scary {
             font-family: 'Mitr', sans-serif; 
@@ -22,17 +41,18 @@
         body {
             background-color: #000;
             overflow: hidden;
-            color: #ff0033;
+            color: var(--primary);
             margin: 0;
             padding: 0;
+            transition: color 0.5s ease;
         }
         
         .scanline {
             width: 100%;
             height: 100px;
             z-index: 10;
-            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(255, 0, 51, 0.05) 50%, rgba(0,0,0,0) 100%);
-            opacity: 0.1;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, var(--primary) 10%, rgba(0,0,0,0) 100%);
+            opacity: 0.05;
             position: absolute;
             bottom: 100%;
             animation: scanline 10s linear infinite;
@@ -46,7 +66,7 @@
 
         .crt-overlay {
             background: rgba(18, 16, 16, 0.1);
-            background: radial-gradient(circle, rgba(32,0,0,0) 50%, rgba(0,0,0,0.8) 100%);
+            background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 100%);
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             z-index: 5;
@@ -56,8 +76,8 @@
         /* Glitch Text */
         .glitch {
             position: relative;
-            color: #ff0033;
-            text-shadow: 2px 2px #330000;
+            color: var(--primary);
+            text-shadow: 2px 2px var(--shadow);
         }
         .glitch::before, .glitch::after {
             content: attr(data-text);
@@ -70,13 +90,13 @@
         }
         .glitch::before {
             left: 2px;
-            text-shadow: -1px 0 #00ffff;
+            text-shadow: -1px 0 var(--glitch-1);
             clip: rect(44px, 450px, 56px, 0);
             animation: glitch-anim 5s infinite linear alternate-reverse;
         }
         .glitch::after {
             left: -2px;
-            text-shadow: -1px 0 #ff0033;
+            text-shadow: -1px 0 var(--glitch-2);
             clip: rect(44px, 450px, 56px, 0);
             animation: glitch-anim2 5s infinite linear alternate-reverse;
         }
@@ -90,11 +110,11 @@
             100% { clip: rect(2px, 9999px, 85px, 0); transform: skew(0.66deg); }
         }
 
-        /* Success Green Text */
+        /* Success Text */
         .success-glitch-text {
             position: relative;
-            color: #00ff00;
-            text-shadow: 2px 2px 0px #003300;
+            color: var(--primary);
+            text-shadow: 2px 2px 0px var(--shadow);
             font-weight: 900;
             animation: glitch-skew 1s infinite linear alternate-reverse;
         }
@@ -111,40 +131,54 @@
             left: -2px;
             text-shadow: -2px 0 #ffffff;
             clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim-green 3s infinite linear alternate-reverse;
+            animation: glitch-anim 3s infinite linear alternate-reverse;
         }
         .success-glitch-text::after {
             left: 2px;
-            text-shadow: -2px 0 #33ff33;
+            text-shadow: -2px 0 var(--primary);
             clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim2-green 2.5s infinite linear alternate-reverse;
+            animation: glitch-anim2 2.5s infinite linear alternate-reverse;
         }
 
         @keyframes glitch-skew { 0% { transform: skew(1deg); } 100% { transform: skew(0deg); } }
-        @keyframes glitch-anim-green { 0% { clip: rect(12px, 9999px, 75px, 0); } 100% { clip: rect(53px, 9999px, 18px, 0); } }
-        @keyframes glitch-anim2-green { 0% { clip: rect(65px, 9999px, 100px, 0); } 100% { clip: rect(2px, 9999px, 85px, 0); } }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1a0000; }
-        ::-webkit-scrollbar-thumb { background: #660000; }
-        ::-webkit-scrollbar-thumb:hover { background: #990000; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--secondary); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        input:focus { outline: none; box-shadow: 0 0 15px rgba(255, 0, 51, 0.5); }
+        input:focus { outline: none; box-shadow: 0 0 15px var(--primary); border-color: var(--primary); }
+
+        /* Theme Transition */
+        .theme-transition * {
+            transition: color 0.5s ease, border-color 0.5s ease, background-color 0.5s ease, box-shadow 0.5s ease;
+        }
     </style>
 </head>
-<body class="h-screen w-full relative flex items-center justify-center font-scary">
+<body class="h-screen w-full relative flex items-center justify-center font-scary theme-transition">
 
     <canvas id="matrix" class="absolute top-0 left-0 w-full h-full z-0"></canvas>
     <div class="scanline"></div>
     <div class="crt-overlay"></div>
 
-    <div class="relative z-20 w-full max-w-md p-6 mx-4 border border-red-900 bg-black/80 backdrop-blur-sm shadow-[0_0_50px_rgba(255,0,0,0.2)] rounded-sm">
+    <!-- Theme Toggle Button (Paint Bucket Icon) -->
+    <button onclick="window.toggleTheme()" class="absolute top-4 left-4 z-50 text-red-800 hover:text-red-500 transition-colors p-2 border border-red-900/50 bg-black/50 backdrop-blur rounded hover:bg-red-900/20 group cursor-pointer" id="themeBtn" title="เปลี่ยนธีม">
+        <!-- Paint Bucket Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paint-bucket transition-transform group-hover:rotate-12">
+            <path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/>
+            <path d="m5 2 5 5"/>
+            <path d="M2 13h15"/>
+            <path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"/>
+        </svg>
+    </button>
+
+    <div class="relative z-20 w-full max-w-md p-6 mx-4 border border-red-900 bg-black/80 backdrop-blur-sm shadow-[0_0_50px_rgba(255,0,0,0.2)] rounded-sm" id="mainCard">
         <div class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold mb-2 glitch" data-text="ฉันจะทำตามทุกสิ่งที่คุณขอเอง">
                 ฉันจะทำตามทุกสิ่งที่คุณขอเอง
             </h1>
-            <p class="text-red-800 text-xs tracking-[0.3em] uppercase mt-2">System: READY</p>
+            <p class="text-red-800 text-xs tracking-[0.3em] uppercase mt-2" id="statusText">System: RED_PROTOCOL</p>
         </div>
 
         <div class="space-y-4">
@@ -154,7 +188,7 @@
                     placeholder="พิมพ์คำขอของคุณที่นี่..." autocomplete="off">
             </div>
 
-            <button onclick="window.handleRequest()" 
+            <button onclick="window.handleRequest()" id="submitBtn"
                 class="w-full bg-red-900/20 hover:bg-red-900/40 border border-red-800 text-red-500 py-3 px-4 uppercase tracking-widest text-sm font-bold transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,0,0,0.4)] hover:text-red-300 group relative overflow-hidden cursor-pointer">
                 <span class="relative z-10">ร้องขอ (REQUEST)</span>
                 <div class="absolute inset-0 h-full w-full bg-red-800/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
@@ -162,9 +196,9 @@
         </div>
 
         <div class="mt-10">
-            <div class="flex justify-between items-end mb-3 border-b border-red-900/30 pb-1">
+            <div class="flex justify-between items-end mb-3 border-b border-red-900/30 pb-1" id="historyHeader">
                 <h2 class="text-red-900 text-xs uppercase tracking-widest">ประวัติสัญญา (History)</h2>
-                <button onclick="window.clearAllHistory()" class="text-[10px] text-red-900 hover:text-red-500 uppercase tracking-widest transition-colors border border-red-900/50 px-2 py-0.5 hover:bg-red-900/20 cursor-pointer">
+                <button onclick="window.clearAllHistory()" id="clearBtn" class="text-[10px] text-red-900 hover:text-red-500 uppercase tracking-widest transition-colors border border-red-900/50 px-2 py-0.5 hover:bg-red-900/20 cursor-pointer">
                     ลบทั้งหมด (CLEAR ALL)
                 </button>
             </div>
@@ -185,10 +219,10 @@
 
     <!-- Success Modal -->
     <div id="successModal" class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center hidden">
-        <div class="text-center transform scale-110 border border-green-800 p-10 bg-black">
+        <div class="text-center transform scale-110 border border-red-800 p-10 bg-black" id="successCard">
             <h2 class="text-5xl md:text-6xl font-bold mb-2 success-glitch-text" data-text="ร้องขอเสร็จสิ้น">ร้องขอเสร็จสิ้น</h2>
-            <p class="text-green-600 text-sm mt-4 tracking-[0.2em] uppercase font-bold">ข้อตกลงได้รับการอนุมัติ</p>
-            <div class="mt-6 text-green-800 font-mono text-xs">STATUS: SAVED</div>
+            <p class="text-red-600 text-sm mt-4 tracking-[0.2em] uppercase font-bold" id="successMsg">ข้อตกลงได้รับการอนุมัติ</p>
+            <div class="mt-6 text-red-800 font-mono text-xs" id="successStatus">STATUS: SAVED</div>
         </div>
     </div>
 
@@ -198,6 +232,43 @@
 
     <script>
         (function() {
+            // --- THEME LOGIC ---
+            let currentTheme = 'red';
+            const colors = {
+                red: { primary: '#ff0033', secondary: '#800000', glow: '#ff0000' },
+                green: { primary: '#00ff33', secondary: '#008000', glow: '#00ff00' }
+            };
+
+            window.toggleTheme = function() {
+                const body = document.body;
+                const oldTheme = currentTheme;
+                currentTheme = currentTheme === 'red' ? 'green' : 'red';
+                const newTheme = currentTheme;
+
+                if (newTheme === 'green') body.classList.add('theme-green');
+                else body.classList.remove('theme-green');
+
+                const elements = document.querySelectorAll('*');
+                elements.forEach(el => {
+                    const classList = [...el.classList];
+                    classList.forEach(cls => {
+                        if (cls.includes(oldTheme)) {
+                            el.classList.replace(cls, cls.replace(oldTheme, newTheme));
+                        }
+                    });
+                });
+                
+                document.getElementById('statusText').innerText = `System: ${newTheme.toUpperCase()}_PROTOCOL`;
+                localStorage.setItem('cursed_theme', newTheme);
+            };
+
+            function restoreTheme() {
+                const savedTheme = localStorage.getItem('cursed_theme');
+                if (savedTheme && savedTheme === 'green') {
+                    window.toggleTheme();
+                }
+            }
+
             // --- STORAGE LOGIC ---
             const STORAGE_KEY = 'cursed_terminal_universal';
 
@@ -225,12 +296,10 @@
 
             let isRequesting = false;
 
-            // Expose global functions for onclick
             window.handleRequest = function() {
                 const text = els.input.value.trim();
                 if (!text) return;
 
-                // Save IMMEDIATELY before animation
                 const data = getHistory();
                 const now = new Date();
                 const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
@@ -238,7 +307,6 @@
                 saveHistory(data);
                 renderHistory();
 
-                // UI Animation
                 isRequesting = true;
                 els.loading.classList.remove('hidden');
                 
@@ -279,17 +347,23 @@
 
                 data.forEach(item => {
                     const div = document.createElement('div');
-                    div.className = "history-item p-2 text-red-400 hover:bg-red-900/10 transition-colors flex justify-between items-center border-l-2 border-red-600 mb-1 bg-gradient-to-r from-red-900/20 to-transparent";
+                    const borderClass = currentTheme === 'green' ? 'border-green-600' : 'border-red-600';
+                    const textClass = currentTheme === 'green' ? 'text-green-400' : 'text-red-400';
+                    const hoverClass = currentTheme === 'green' ? 'hover:bg-green-900/10' : 'hover:bg-red-900/10';
+                    const gradClass = currentTheme === 'green' ? 'from-green-900/20' : 'from-red-900/20';
+                    const btnClass = currentTheme === 'green' ? 'text-green-900 hover:text-green-500' : 'text-red-900 hover:text-red-500';
+                    const timeClass = currentTheme === 'green' ? 'text-green-800' : 'text-red-800';
+
+                    div.className = `history-item p-2 ${textClass} ${hoverClass} transition-colors flex justify-between items-center border-l-2 ${borderClass} mb-1 bg-gradient-to-r ${gradClass} to-transparent`;
                     
-                    // Use textContent to prevent XSS
                     const textSpan = document.createElement('span');
                     textSpan.textContent = item.text;
                     
-                    div.innerHTML = `<div class="break-all mr-2 flex-1"><span class="text-red-800 text-xs mr-2 font-bold">[${item.time}]</span></div>`;
+                    div.innerHTML = `<div class="break-all mr-2 flex-1"><span class="${timeClass} text-xs mr-2 font-bold">[${item.time}]</span></div>`;
                     div.querySelector('div').appendChild(textSpan);
 
                     const btn = document.createElement('button');
-                    btn.className = "text-red-900 hover:text-red-500 px-2 font-bold cursor-pointer";
+                    btn.className = `${btnClass} px-2 font-bold cursor-pointer`;
                     btn.innerText = "X";
                     btn.onclick = () => window.deleteItem(item.id);
                     
@@ -298,7 +372,7 @@
                 });
             }
 
-            // Matrix Effect
+            // Matrix Effect (Dynamic Color)
             function initMatrix() {
                 const canvas = document.getElementById('matrix');
                 const ctx = canvas.getContext('2d');
@@ -318,12 +392,13 @@
                 setInterval(() => {
                     ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.fillStyle = "#800000";
+                    
+                    const c = colors[currentTheme];
                     ctx.font = fontSize + "px monospace";
 
                     for(let i=0; i<drops.length; i++) {
                         const text = chars[Math.floor(Math.random()*chars.length)];
-                        ctx.fillStyle = Math.random() > 0.95 ? "#ff0000" : "#800000";
+                        ctx.fillStyle = Math.random() > 0.95 ? c.glow : c.secondary;
                         ctx.fillText(text, i*fontSize, drops[i]*fontSize);
                         if(drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                         drops[i]++;
@@ -331,7 +406,6 @@
                 }, 35);
             }
 
-            // Random Code Animation
             const codes = "01X†ΨΩ";
             setInterval(() => {
                 if(isRequesting && els.code) {
@@ -341,8 +415,9 @@
                 }
             }, 100);
 
-            // Init
             els.input.addEventListener('keypress', e => { if(e.key === 'Enter') window.handleRequest(); });
+            
+            restoreTheme(); 
             renderHistory();
             initMatrix();
 
@@ -350,4 +425,3 @@
     </script>
 </body>
 </html>
-
