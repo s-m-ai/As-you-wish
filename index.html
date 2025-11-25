@@ -11,11 +11,18 @@
     <style>
         /* === CSS Variables for Dynamic Theme === */
         :root {
-            --primary: #ff0033;
-            --secondary: #800000;
-            --glow: #ff0000;
+            --primary: #ff0033; /* Main bright color */
+            --secondary: #800000; /* Matrix/Darker color */
+            --glow: #ff0000; /* Glow color (Solid) */
+            --glow-rgb: 255, 0, 0; /* Glow color (RGB for transparent shadow) */
             --shadow: #330000;
-            --glitch-1: #00ffff;
+
+            /* Specific shades replacing hardcoded Tailwind colors (e.g., red-800, red-900) */
+            --shade-dark: #cc0026; /* For text-800/900 */
+            --shade-medium: #ff6680; /* For text-500/300 */
+            --shade-placeholder: rgba(204, 0, 38, 0.5); /* For placeholder text-900/50 */
+
+            --glitch-1: #00ffff; /* Cyan for Red theme */
             --glitch-2: #ff0033;
         }
 
@@ -23,8 +30,14 @@
             --primary: #00ff33;
             --secondary: #008000;
             --glow: #00ff00;
+            --glow-rgb: 0, 255, 0;
             --shadow: #003300;
-            --glitch-1: #ff00ff;
+            
+            --shade-dark: #00cc26;
+            --shade-medium: #66ff80;
+            --shade-placeholder: rgba(0, 204, 38, 0.5);
+
+            --glitch-1: #ff00ff; /* Magenta for Green theme */
             --glitch-2: #00ff33;
         }
 
@@ -37,7 +50,7 @@
             font-family: 'Creepster', cursive;
         }
 
-        /* Background and Scanlines */
+        /* Background - Scanline ถูกลบออกแล้ว */
         body {
             background-color: #000;
             overflow: hidden;
@@ -47,23 +60,7 @@
             transition: color 0.5s ease;
         }
         
-        .scanline {
-            width: 100%;
-            height: 100px;
-            z-index: 10;
-            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, var(--primary) 10%, rgba(0,0,0,0) 100%);
-            opacity: 0.05;
-            position: absolute;
-            bottom: 100%;
-            animation: scanline 10s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes scanline {
-            0% { bottom: 100%; }
-            100% { bottom: -100%; }
-        }
-
+        /* CRT Overlay - ยังคงอยู่เพื่อเอฟเฟกต์จอมอนิเตอร์ */
         .crt-overlay {
             background: rgba(18, 16, 16, 0.1);
             background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 100%);
@@ -73,74 +70,59 @@
             pointer-events: none;
         }
 
-        /* Glitch Text */
-        .glitch {
-            position: relative;
-            color: var(--primary);
-            text-shadow: 2px 2px var(--shadow);
-        }
-        .glitch::before, .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-        }
-        .glitch::before {
-            left: 2px;
-            text-shadow: -1px 0 var(--glitch-1);
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim 5s infinite linear alternate-reverse;
-        }
-        .glitch::after {
+        /* Glitch Text (Uses primary/shadow/glitch variables - already dynamic) */
+        .glitch { position: relative; color: var(--primary); text-shadow: 2px 2px var(--shadow); }
+        .glitch::before, .glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; }
+        .glitch::before { left: 2px; text-shadow: -1px 0 var(--glitch-1); clip: rect(44px, 450px, 56px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
+        .glitch::after { left: -2px; text-shadow: -1px 0 var(--glitch-2); clip: rect(44px, 450px, 56px, 0); animation: glitch-anim2 5s infinite linear alternate-reverse; }
+        @keyframes glitch-anim { 0% { clip: rect(36px, 9999px, 9px, 0); transform: skew(0.85deg); } 100% { clip: rect(53px, 9999px, 18px, 0); transform: skew(0.52deg); } }
+        @keyframes glitch-anim2 { 0% { clip: rect(65px, 9999px, 100px, 0); transform: skew(0.32deg); } 100% { clip: rect(2px, 9999px, 85px, 0); transform: skew(0.66deg); } }
+
+        /* Success Text (WHITE LINE REMOVED) */
+        .success-glitch-text { position: relative; color: var(--primary); text-shadow: 2px 2px 0px var(--shadow); font-weight: 900; animation: glitch-skew 1s infinite linear alternate-reverse; }
+        .success-glitch-text::before, .success-glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; }
+        .success-glitch-text::before { 
             left: -2px;
-            text-shadow: -1px 0 var(--glitch-2);
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim2 5s infinite linear alternate-reverse;
+            /* เปลี่ยนจาก #ffffff เป็นสี glitch-1 เพื่อให้เปลี่ยนตามธีม */
+            text-shadow: -2px 0 var(--glitch-1); 
+            clip: rect(44px, 450px, 56px, 0); 
+            animation: glitch-anim 3s infinite linear alternate-reverse; 
         }
-
-        @keyframes glitch-anim {
-            0% { clip: rect(36px, 9999px, 9px, 0); transform: skew(0.85deg); }
-            100% { clip: rect(53px, 9999px, 18px, 0); transform: skew(0.52deg); }
-        }
-        @keyframes glitch-anim2 {
-            0% { clip: rect(65px, 9999px, 100px, 0); transform: skew(0.32deg); }
-            100% { clip: rect(2px, 9999px, 85px, 0); transform: skew(0.66deg); }
-        }
-
-        /* Success Text */
-        .success-glitch-text {
-            position: relative;
-            color: var(--primary);
-            text-shadow: 2px 2px 0px var(--shadow);
-            font-weight: 900;
-            animation: glitch-skew 1s infinite linear alternate-reverse;
-        }
-        .success-glitch-text::before, .success-glitch-text::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-        }
-        .success-glitch-text::before {
-            left: -2px;
-            text-shadow: -2px 0 #ffffff;
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim 3s infinite linear alternate-reverse;
-        }
-        .success-glitch-text::after {
-            left: 2px;
-            text-shadow: -2px 0 var(--primary);
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim2 2.5s infinite linear alternate-reverse;
-        }
-
+        .success-glitch-text::after { left: 2px; text-shadow: -2px 0 var(--primary); clip: rect(44px, 450px, 56px, 0); animation: glitch-anim2 2.5s infinite linear alternate-reverse; }
         @keyframes glitch-skew { 0% { transform: skew(1deg); } 100% { transform: skew(0deg); } }
+
+        /* --- DYNAMIC UTILITY CLASSES --- */
+
+        /* Text Colors */
+        .text-theme-dark { color: var(--shade-dark); }
+        .text-theme-medium { color: var(--shade-medium); }
+        .text-theme-primary { color: var(--primary); }
+        .placeholder-theme-dark::placeholder { color: var(--shade-placeholder); }
+        .text-theme-secondary { color: var(--secondary); }
+
+        /* Border Colors */
+        .border-theme-dark { border-color: var(--shade-dark); }
+        .border-theme-primary { border-color: var(--primary); }
+        .border-theme-secondary { border-color: var(--secondary); }
+
+        /* Background Colors/Opacity */
+        .bg-theme-bg-dark-20 { background-color: rgba(var(--glow-rgb), 0.2); }
+        .bg-theme-bg-dark-40-hover:hover { background-color: rgba(var(--glow-rgb), 0.4); }
+        .bg-theme-glow-20-inner { background-color: rgba(var(--glow-rgb), 0.2); }
+
+        /* Dynamic Glow Shadows */
+        .terminal-shadow {
+            box-shadow: 0 0 50px rgba(var(--glow-rgb), 0.2);
+        }
+        
+        .button-glow:hover {
+            box-shadow: 0 0 15px rgba(var(--glow-rgb), 0.4);
+        }
+
+        /* Loading Bar Progress Shadow/Color */
+        .loading-progress-bar {
+            box-shadow: 0 0 10px var(--glow);
+        }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
@@ -148,6 +130,7 @@
         ::-webkit-scrollbar-thumb { background: var(--secondary); }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
+        /* Input Focus */
         input:focus { outline: none; box-shadow: 0 0 15px var(--primary); border-color: var(--primary); }
 
         /* Theme Transition */
@@ -159,13 +142,13 @@
 <body class="h-screen w-full relative flex items-center justify-center font-scary theme-transition">
 
     <canvas id="matrix" class="absolute top-0 left-0 w-full h-full z-0"></canvas>
-    <div class="scanline"></div>
+    <!-- <div class="scanline"></div> ถูกลบออกแล้ว -->
     <div class="crt-overlay"></div>
 
-    <!-- Theme Toggle Button (Paint Bucket Icon) -->
-    <button onclick="window.toggleTheme()" class="absolute top-4 left-4 z-50 text-red-800 hover:text-red-500 transition-colors p-2 border border-red-900/50 bg-black/50 backdrop-blur rounded hover:bg-red-900/20 group cursor-pointer" id="themeBtn" title="เปลี่ยนธีม">
+    <!-- Theme Toggle Button (ใช้คลาส Dynamic ใหม่) -->
+    <button onclick="window.toggleTheme()" class="absolute top-4 left-4 z-50 text-theme-dark hover:text-theme-medium transition-colors p-2 border border-theme-secondary/50 bg-black/50 backdrop-blur rounded hover:bg-theme-bg-dark-20 group cursor-pointer" id="themeBtn" title="เปลี่ยนธีม">
         <!-- Paint Bucket Icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paint-bucket transition-transform group-hover:rotate-12">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paint-bucket transition-transform group-hover:rotate-12 text-current">
             <path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"/>
             <path d="m5 2 5 5"/>
             <path d="M2 13h15"/>
@@ -173,56 +156,63 @@
         </svg>
     </button>
 
-    <div class="relative z-20 w-full max-w-md p-6 mx-4 border border-red-900 bg-black/80 backdrop-blur-sm shadow-[0_0_50px_rgba(255,0,0,0.2)] rounded-sm" id="mainCard">
+    <!-- Main Card - ใช้ terminal-shadow สำหรับเงา Dynamic -->
+    <div class="relative z-20 w-full max-w-md p-6 mx-4 border border-theme-secondary bg-black/80 backdrop-blur-sm terminal-shadow rounded-sm" id="mainCard">
         <div class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold mb-2 glitch" data-text="ฉันจะทำตามทุกสิ่งที่คุณขอเอง">
                 ฉันจะทำตามทุกสิ่งที่คุณขอเอง
             </h1>
-            <p class="text-red-800 text-xs tracking-[0.3em] uppercase mt-2" id="statusText">System: RED_PROTOCOL</p>
+            <p class="text-theme-dark text-xs tracking-[0.3em] uppercase mt-2" id="statusText">System: RED_PROTOCOL</p>
         </div>
 
         <div class="space-y-4">
             <div class="relative group">
+                <!-- Input Field - ใช้คลาส Dynamic ใหม่ -->
                 <input type="text" id="requestInput" 
-                    class="w-full bg-black border-b-2 border-red-800 text-red-500 px-4 py-3 focus:border-red-500 transition-colors placeholder-red-900/50 font-mono"
+                    class="w-full bg-black border-b-2 border-theme-dark text-theme-medium px-4 py-3 focus:border-theme-medium transition-colors placeholder-theme-dark font-mono"
                     placeholder="พิมพ์คำขอของคุณที่นี่..." autocomplete="off">
             </div>
 
+            <!-- Submit Button - ใช้คลาส Dynamic ใหม่ และ button-glow สำหรับเงา Hover Dynamic -->
             <button onclick="window.handleRequest()" id="submitBtn"
-                class="w-full bg-red-900/20 hover:bg-red-900/40 border border-red-800 text-red-500 py-3 px-4 uppercase tracking-widest text-sm font-bold transition-all duration-300 hover:shadow-[0_0_15px_rgba(255,0,0,0.4)] hover:text-red-300 group relative overflow-hidden cursor-pointer">
+                class="w-full bg-theme-bg-dark-20 bg-theme-bg-dark-40-hover border border-theme-dark text-theme-medium py-3 px-4 uppercase tracking-widest text-sm font-bold transition-all duration-300 button-glow hover:text-theme-medium group relative overflow-hidden cursor-pointer">
                 <span class="relative z-10">ร้องขอ (REQUEST)</span>
-                <div class="absolute inset-0 h-full w-full bg-red-800/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+                <!-- Inner BG for hover effect - ใช้ bg-theme-glow-20-inner -->
+                <div class="absolute inset-0 h-full w-full bg-theme-glow-20-inner transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
             </button>
         </div>
 
         <div class="mt-10">
-            <div class="flex justify-between items-end mb-3 border-b border-red-900/30 pb-1" id="historyHeader">
-                <h2 class="text-red-900 text-xs uppercase tracking-widest">ประวัติสัญญา (History)</h2>
-                <button onclick="window.clearAllHistory()" id="clearBtn" class="text-[10px] text-red-900 hover:text-red-500 uppercase tracking-widest transition-colors border border-red-900/50 px-2 py-0.5 hover:bg-red-900/20 cursor-pointer">
+            <div class="flex justify-between items-end mb-3 border-b border-theme-secondary/30 pb-1" id="historyHeader">
+                <h2 class="text-theme-secondary text-xs uppercase tracking-widest">ประวัติสัญญา (History)</h2>
+                <!-- Clear Button - ใช้คลาส Dynamic ใหม่ -->
+                <button onclick="window.clearAllHistory()" id="clearBtn" class="text-[10px] text-theme-secondary hover:text-theme-medium uppercase tracking-widest transition-colors border border-theme-secondary/50 px-2 py-0.5 hover:bg-theme-glow-20-inner cursor-pointer">
                     ลบทั้งหมด (CLEAR ALL)
                 </button>
             </div>
             <div id="historyList" class="space-y-2 max-h-40 overflow-y-auto pr-2 font-mono text-sm">
-                <div id="emptyMsg" class="text-red-900/40 text-xs italic text-center py-4 select-none">กำลังเชื่อมต่อ...</div>
+                <!-- emptyMsg - ใช้คลาส Dynamic ใหม่ -->
+                <div id="emptyMsg" class="text-theme-secondary/40 text-xs italic text-center py-4 select-none">กำลังเชื่อมต่อ...</div>
             </div>
         </div>
     </div>
 
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center hidden">
-        <div class="text-red-600 text-4xl font-bold mb-4 glitch" data-text="กำลังร้องขอ...">กำลังร้องขอ...</div>
-        <div class="w-64 h-1 bg-red-900/30 rounded overflow-hidden">
-            <div class="h-full bg-red-600 animate-progress shadow-[0_0_10px_#ff0000]" style="animation: progress 2s ease-in-out infinite;"></div>
+        <div class="text-theme-medium text-4xl font-bold mb-4 glitch" data-text="กำลังร้องขอ...">กำลังร้องขอ...</div>
+        <div class="w-64 h-1 bg-theme-secondary/30 rounded overflow-hidden">
+            <!-- Loading Bar - ใช้ bg-current และ loading-progress-bar เพื่อให้สีและเงาตามธีม -->
+            <div class="h-full bg-current animate-progress loading-progress-bar" style="animation: progress 2s ease-in-out infinite;"></div>
         </div>
-        <div id="randomCode" class="mt-4 text-red-800 font-mono text-xs font-creep tracking-widest opacity-50">01010101</div>
+        <div id="randomCode" class="mt-4 text-theme-dark font-mono text-xs font-creep tracking-widest opacity-50">01010101</div>
     </div>
 
     <!-- Success Modal -->
     <div id="successModal" class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center hidden">
-        <div class="text-center transform scale-110 border border-red-800 p-10 bg-black" id="successCard">
+        <div class="text-center transform scale-110 border border-theme-dark p-10 bg-black" id="successCard">
             <h2 class="text-5xl md:text-6xl font-bold mb-2 success-glitch-text" data-text="ร้องขอเสร็จสิ้น">ร้องขอเสร็จสิ้น</h2>
-            <p class="text-red-600 text-sm mt-4 tracking-[0.2em] uppercase font-bold" id="successMsg">ข้อตกลงได้รับการอนุมัติ</p>
-            <div class="mt-6 text-red-800 font-mono text-xs" id="successStatus">STATUS: SAVED</div>
+            <p class="text-theme-medium text-sm mt-4 tracking-[0.2em] uppercase font-bold" id="successMsg">ข้อตกลงได้รับการอนุมัติ</p>
+            <div class="mt-6 text-theme-dark font-mono text-xs" id="successStatus">STATUS: SAVED</div>
         </div>
     </div>
 
@@ -232,56 +222,33 @@
 
     <script>
         (function() {
-            // --- THEME LOGIC ---
+            // --- NON-PERSISTENT STATE (Resets on refresh) ---
             let currentTheme = 'red';
+            let appHistory = []; // In-memory history
+
             const colors = {
                 red: { primary: '#ff0033', secondary: '#800000', glow: '#ff0000' },
                 green: { primary: '#00ff33', secondary: '#008000', glow: '#00ff00' }
             };
 
+            // --- THEME LOGIC (No localStorage) ---
             window.toggleTheme = function() {
                 const body = document.body;
-                const oldTheme = currentTheme;
                 currentTheme = currentTheme === 'red' ? 'green' : 'red';
                 const newTheme = currentTheme;
 
                 if (newTheme === 'green') body.classList.add('theme-green');
                 else body.classList.remove('theme-green');
-
-                const elements = document.querySelectorAll('*');
-                elements.forEach(el => {
-                    const classList = [...el.classList];
-                    classList.forEach(cls => {
-                        if (cls.includes(oldTheme)) {
-                            el.classList.replace(cls, cls.replace(oldTheme, newTheme));
-                        }
-                    });
-                });
                 
                 document.getElementById('statusText').innerText = `System: ${newTheme.toUpperCase()}_PROTOCOL`;
-                localStorage.setItem('cursed_theme', newTheme);
+                renderHistory();
             };
 
-            function restoreTheme() {
-                const savedTheme = localStorage.getItem('cursed_theme');
-                if (savedTheme && savedTheme === 'green') {
-                    window.toggleTheme();
-                }
-            }
-
-            // --- STORAGE LOGIC ---
-            const STORAGE_KEY = 'cursed_terminal_universal';
-
-            function getHistory() {
-                try {
-                    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-                } catch { return []; }
-            }
-
-            function saveHistory(data) {
-                try {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                } catch(e) { console.error('Save failed', e); }
+            function setDefaultTheme() {
+                // Forces default to RED, ignores any prior state
+                currentTheme = 'red';
+                document.body.classList.remove('theme-green'); 
+                document.getElementById('statusText').innerText = `System: RED_PROTOCOL`;
             }
 
             // --- UI LOGIC ---
@@ -300,16 +267,17 @@
                 const text = els.input.value.trim();
                 if (!text) return;
 
-                const data = getHistory();
+                // 1. Save to In-Memory History
                 const now = new Date();
                 const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-                data.unshift({ id: Date.now(), text: text, time: timeStr });
-                saveHistory(data);
+                appHistory.unshift({ id: Date.now(), text: text, time: timeStr });
                 renderHistory();
 
+                // 2. Start Loading Sequence
                 isRequesting = true;
                 els.loading.classList.remove('hidden');
                 
+                // 3. Simulate Request Latency and Show Success
                 setTimeout(() => {
                     isRequesting = false;
                     els.loading.classList.add('hidden');
@@ -317,24 +285,32 @@
                     els.input.value = "";
                     
                     setTimeout(() => els.success.classList.add('hidden'), 2000);
-                }, 2500);
+                }, 2500); // 2.5 seconds delay
+            };
+
+            // Custom confirm to prevent iframe issues
+            window.confirm = (message) => {
+                console.log("Confirmation dialog suppressed: " + message);
+                return true; 
             };
 
             window.deleteItem = function(id) {
-                const data = getHistory().filter(item => item.id !== id);
-                saveHistory(data);
-                renderHistory();
+                if (window.confirm('ต้องการลบรายการนี้ใช่หรือไม่?')) {
+                    // Filter in-memory array directly
+                    appHistory = appHistory.filter(item => item.id !== id);
+                    renderHistory();
+                }
             };
 
             window.clearAllHistory = function() {
-                if(confirm('ต้องการลบประวัติทั้งหมดใช่หรือไม่?')) {
-                    localStorage.removeItem(STORAGE_KEY);
+                if(window.confirm('ต้องการลบประวัติทั้งหมดใช่หรือไม่?')) {
+                    appHistory = []; // Clear in-memory array directly
                     renderHistory();
                 }
             };
 
             function renderHistory() {
-                const data = getHistory();
+                const data = appHistory; // Use in-memory data
                 els.list.innerHTML = '';
                 
                 if (data.length === 0) {
@@ -345,25 +321,27 @@
                 }
                 els.empty.style.display = 'none';
 
+                // Classes are still derived from currentTheme for dynamic colors
+                const isGreen = currentTheme === 'green';
+                const borderClass = isGreen ? 'border-[#00991F]' : 'border-[#CC0026]'; // Shade-dark equivalent
+                const textClass = isGreen ? 'text-[#66FF80]' : 'text-[#FF6680]'; // Shade-medium equivalent
+                const hoverClass = isGreen ? 'hover:bg-[#002B00]' : 'hover:bg-[#330009]'; // Subtle hover bg
+                const timeClass = isGreen ? 'text-[#008000]' : 'text-[#800000]'; // Secondary color for timestamp
+
                 data.forEach(item => {
                     const div = document.createElement('div');
-                    const borderClass = currentTheme === 'green' ? 'border-green-600' : 'border-red-600';
-                    const textClass = currentTheme === 'green' ? 'text-green-400' : 'text-red-400';
-                    const hoverClass = currentTheme === 'green' ? 'hover:bg-green-900/10' : 'hover:bg-red-900/10';
-                    const gradClass = currentTheme === 'green' ? 'from-green-900/20' : 'from-red-900/20';
-                    const btnClass = currentTheme === 'green' ? 'text-green-900 hover:text-green-500' : 'text-red-900 hover:text-red-500';
-                    const timeClass = currentTheme === 'green' ? 'text-green-800' : 'text-red-800';
-
-                    div.className = `history-item p-2 ${textClass} ${hoverClass} transition-colors flex justify-between items-center border-l-2 ${borderClass} mb-1 bg-gradient-to-r ${gradClass} to-transparent`;
                     
-                    const textSpan = document.createElement('span');
-                    textSpan.textContent = item.text;
+                    div.className = `history-item p-2 ${textClass} ${hoverClass} transition-colors flex justify-between items-center border-l-2 ${borderClass} mb-1 bg-gradient-to-r from-black/50 to-transparent`;
                     
-                    div.innerHTML = `<div class="break-all mr-2 flex-1"><span class="${timeClass} text-xs mr-2 font-bold">[${item.time}]</span></div>`;
-                    div.querySelector('div').appendChild(textSpan);
+                    div.innerHTML = `
+                        <div class="break-all mr-2 flex-1">
+                            <span class="${timeClass} text-xs mr-2 font-bold">[${item.time}]</span>
+                            <span>${item.text}</span>
+                        </div>
+                    `;
 
                     const btn = document.createElement('button');
-                    btn.className = `${btnClass} px-2 font-bold cursor-pointer`;
+                    btn.className = `${timeClass} px-2 font-bold cursor-pointer hover:text-white transition-colors`;
                     btn.innerText = "X";
                     btn.onclick = () => window.deleteItem(item.id);
                     
@@ -372,22 +350,27 @@
                 });
             }
 
+
             // Matrix Effect (Dynamic Color)
             function initMatrix() {
                 const canvas = document.getElementById('matrix');
+                if (!canvas) return; 
                 const ctx = canvas.getContext('2d');
                 
                 function resize() {
                     canvas.width = window.innerWidth;
                     canvas.height = window.innerHeight;
+                    columns = Math.floor(canvas.width / fontSize);
+                    drops = Array(columns).fill(1);
                 }
                 window.addEventListener('resize', resize);
-                resize();
-
+                
                 const chars = "01";
                 const fontSize = 16;
                 let columns = Math.floor(canvas.width / fontSize);
-                const drops = Array(columns).fill(1);
+                let drops = Array(columns).fill(1);
+
+                resize(); 
 
                 setInterval(() => {
                     ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
@@ -403,25 +386,4 @@
                         if(drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                         drops[i]++;
                     }
-                }, 35);
-            }
-
-            const codes = "01X†ΨΩ";
-            setInterval(() => {
-                if(isRequesting && els.code) {
-                    let txt = "";
-                    for(let i=0; i<20; i++) txt += codes[Math.floor(Math.random() * codes.length)];
-                    els.code.innerText = txt;
-                }
-            }, 100);
-
-            els.input.addEventListener('keypress', e => { if(e.key === 'Enter') window.handleRequest(); });
-            
-            restoreTheme(); 
-            renderHistory();
-            initMatrix();
-
-        })();
-    </script>
-</body>
-</html>
+                },
